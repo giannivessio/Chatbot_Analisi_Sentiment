@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot di Analisi Sentiment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #ffffff;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .chat-box {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background-color: #e9f7fd;
+        }
+        .user-message {
+            background-color: #d1e8ff;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #f0f0f0;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .sentiment-buttons {
+            margin-top: 10px;
+        }
+        .sentiment-buttons button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h3 class="text-center">Chatbot di Analisi del Sentimento</h3>
+        <div class="chat-box" id="chat-box">
+            <!-- I messaggi appariranno qui -->
+        </div>
+        <input type="text" id="input-comment" placeholder="Scrivi un commento..." />
+        <button onclick="invioCommento()">Invia</button>
+        <button onclick="visualizzaFrasi()">Visualizza Frasi</button>
+    </div>
+
+    <script>
+        let lastId = null; // Per tenere traccia dell'ID dell'ultimo commento
+
+        function invioCommento() {
+            const commento = document.getElementById('input-comment').value;
+            if (commento === "") return;
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ commento: commento })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const chatBox = document.getElementById('chat-box');
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('message', 'user-message');
+                userMessage.textContent = commento;
+                chatBox.appendChild(userMessage);
+
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('message', 'bot-message');
+                botMessage.setAttribute('data-id', data.id); // Aggiungi ID per tracciare il messaggio
+                botMessage.innerHTML = `Sentimento Predetto: ${data.predizione}<br>${data.risposta}`;
+
+                // Pulsanti per modificare il sentimento
+                const sentimentButtons = document.createElement('div');
+                sentimentButtons.classList.add('sentiment-buttons');
+                sentimentButtons.innerHTML = `
+                    <button class="btn btn-success" onclick="modificaSentiment(${data.id}, 'positivo')">Positivo</button>
+                    <button class="btn btn-warning" onclick="modificaSentiment(${data.id}, 'neutro')">Neutro</button>
+                    <button class="btn btn-danger" onclick="modificaSentiment(${data.id}, 'negativo')">Negativo</button>
+                `;
+                botMessage.appendChild(sentimentButtons);
+
+                chatBox.appendChild(botMessage);
+
+                lastId = data.id;  // Salva l'ID del commento per eventuali modifiche
+                document.getElementById('input-comment').value = '';  // Reset del campo
+                chatBox.scrollTop = chatBox.scrollHeight;  // Scroll automatico verso il basso
+            });
+        }
+
+        function modificaSentiment(id, nuovoSentiment) {
+            fetch('/modifica_sentenzo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    nuovo_sentiment: nuovoSentiment,
+                    riaddestra_modello: true // Indichiamo al server che il modello deve essere riaddestrato
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.risultato === 'successo') {
+                    alert('Sentimento modificato con successo e modello riaddestrato!');
+                    aggiornaSentimento(id, nuovoSentiment); // Funzione per aggiornare la UI
+                } else {
+                    alert('Errore durante la modifica del sentimento');
+                }
+            })
+            .catch(error => {
+                console.error('Errore:', error);
+                alert('Si è verificato un errore durante la comunicazione con il server.');
+            });
+        }
+
+        function aggiornaSentimento(id, nuovoSentiment) {
+            const chatBox = document.getElementById('chat-box');
+            const botMessage = chatBox.querySelector(`[data-id="${id}"]`);
+
+            if (botMessage) {
+                botMessage.innerHTML = `Sentimento Modificato: ${nuovoSentiment}`;
+            }
+        }
+
+        function visualizzaFrasi() {
+            fetch('/frasi', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const chatBox = document.getElementById('chat-box');
+                chatBox.innerHTML = '<h5>Lista di Commenti:</h5>';
+                data.frasi.forEach(frase => {
+                    const fraseDiv = document.createElement('div');
+                    fraseDiv.classList.add('message');
+                    fraseDiv.innerHTML = `<b>ID:</b> ${frase.id} <br><b>Frase:</b> ${frase.frase} <br><b>Sentimento Predetto:</b> ${frase.previsione}`;
+                    chatBox.appendChild(fraseDiv);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;  // Scroll automatico verso il basso
+            });
+        }
+    </script>
+</body>
+</html>
