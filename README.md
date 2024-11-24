@@ -4,4 +4,4 @@ This project is a sentiment analysis chatbot built using Flask, SQLite, and mach
 The chatbot processes user comments, determines their sentiment (positive, negative, or neutral), and responds accordingly. 
 Additionally, the project includes features for managing a database of analyzed comments, allowing updates to sentiments and optional model retraining.
 
-[Scarica il PDF](ChatBot SentimentAnalysis.pdf)
+[Scarica il PDF](https://github.com/giannivessio/Chatbot_Analisi_Sentiment/blob/master/ChatBot%20SentimentAnalysis.pdf)
