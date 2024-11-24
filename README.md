@@ -3,7 +3,6 @@
 This project is a sentiment analysis chatbot built using Flask, SQLite, and machine learning techniques based on Naive Bayes. 
 The chatbot processes user comments, determines their sentiment (positive, negative, or neutral), and responds accordingly. 
 Additionally, the project includes features for managing a database of analyzed comments, allowing updates to sentiments and optional model retraining.
-
 [Scarica il PDF](https://github.com/giannivessio/Chatbot_Analisi_Sentiment/blob/master/ChatBot%20SentimentAnalysis.pdf)
 
 PROJECT CREATOR: VESSIO GIOVANNI
