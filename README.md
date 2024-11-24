@@ -5,3 +5,5 @@ The chatbot processes user comments, determines their sentiment (positive, negat
 Additionally, the project includes features for managing a database of analyzed comments, allowing updates to sentiments and optional model retraining.
 
 [Scarica il PDF](https://github.com/giannivessio/Chatbot_Analisi_Sentiment/blob/master/ChatBot%20SentimentAnalysis.pdf)
+
+PROJECT CREATOR: VESSIO GIOVANNI
