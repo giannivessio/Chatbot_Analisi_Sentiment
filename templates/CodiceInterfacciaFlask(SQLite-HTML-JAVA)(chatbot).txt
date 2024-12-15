@@ -15,6 +15,49 @@
             padding: 20px;
             margin: 0;
         }
+
+        .dark-mode {
+            background-color: #121212;
+            color: #eaeaea;
+        }
+
+        .dark-mode .chat-container {
+            background-color: #1e1e1e;
+            box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .chat-box {
+            background-color: #2c2c2c;
+        }
+
+        .dark-mode .message {
+            background-color: #3e3e3e;
+            color: #f5f5f5;
+        }
+
+        .dark-mode .user-message {
+            background-color: #555;
+        }
+
+        .dark-mode .bot-message {
+            background-color: #444;
+        }
+
+        .dark-mode input[type="text"] {
+            background-color: #333;
+            color: #f5f5f5;
+            border: 1px solid #666;
+        }
+
+        .dark-mode button {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .dark-mode button:hover {
+            background-color: #666;
+        }
+
         .chat-container {
             max-width: 600px;
             margin: 50px auto;
@@ -23,25 +66,30 @@
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
+
         .chat-box {
             max-height: 300px;
             overflow-y: auto;
             padding-right: 10px;
             margin-bottom: 20px;
         }
+
         .message {
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 10px;
             background-color: #e9f7fd;
         }
+
         .user-message {
             background-color: #d1e8ff;
             text-align: right;
         }
+
         .bot-message {
             background-color: #f0f0f0;
         }
+
         input[type="text"] {
             width: 80%;
             padding: 10px;
@@ -49,6 +97,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
             background-color: #007bff;
             color: white;
@@ -57,18 +106,37 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .sentiment-buttons {
             margin-top: 10px;
         }
+
         .sentiment-buttons button {
             margin-right: 10px;
+        }
+
+        /* Modalità oscura toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <!-- Bottone per attivare/disattivare la modalità oscura -->
+    <button class="dark-mode-toggle" id="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+
     <div class="chat-container">
         <h3 class="text-center">Chatbot di Analisi del Sentimento</h3>
         <div class="chat-box" id="chat-box">
@@ -81,6 +149,11 @@
 
     <script>
         let lastId = null; // Per tenere traccia dell'ID dell'ultimo commento
+
+        // Funzione per attivare/disattivare la modalità oscura
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
 
         function invioCommento() {
             const commento = document.getElementById('input-comment').value;
